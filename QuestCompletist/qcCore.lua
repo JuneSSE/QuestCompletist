@@ -629,16 +629,8 @@ end
 
 function qcQuestClick(qcButtonIndex)
 	local qcQuestID = _G["qcMenuButton" .. qcButtonIndex].QuestID
-	if (IsLeftShiftKeyDown() == nil) and (IsLeftAltKeyDown() == nil) then
-		if (IsAddOnLoaded('TomTom')) then
-			if (qcQuestDatabase[qcQuestID][13]) then
-				for qcInitiatorIndex, qcInitiatorEntry in pairs(qcQuestDatabase[qcQuestID][13]) do
-					TomTom:AddMFWaypoint(qcInitiatorEntry[3], qcInitiatorEntry[4], qcInitiatorEntry[5]/100, qcInitiatorEntry[6]/100, {title=qcInitiatorEntry[2]})
-				end
-			end
-			TomTom:SetClosestWaypoint()
-		end
-	elseif (IsLeftShiftKeyDown()) then --[[ User wants to toggle the completed status of a quest ]]--
+	if (IsLeftShiftKeyDown()) then --[[ User wants to toggle the completed status of a quest ]]--
+	  --print(string.format("%sLeft shift key is down",QCADDON_CHAT_TITLE))
 		if (qcCompletedQuests[qcQuestID] == nil) then
 			qcCompletedQuests[qcQuestID] = {["C"] = 1}
 		else
@@ -654,7 +646,8 @@ function qcQuestClick(qcButtonIndex)
 				end
 			end
 		end
-	elseif (IsLeftAltKeyDown() ~= nil) then --[[ User wants to toggle the unattainable status of a quest ]]--
+	elseif (IsLeftAltKeyDown()) then --[[ User wants to toggle the unattainable status of a quest ]]--
+	  --print(string.format("%sLeft alt key is down",QCADDON_CHAT_TITLE))
 		if (qcCompletedQuests[qcQuestID] == nil) then
 			qcCompletedQuests[qcQuestID] = {["C"] = 2}
 		else
@@ -670,8 +663,26 @@ function qcQuestClick(qcButtonIndex)
 				end
 			end
 		end
+  else
+    --print(string.format("%sLooking for Tom Tom.",QCADDON_CHAT_TITLE))
+    if (IsAddOnLoaded('TomTom')) then
+      --print(string.format("%sLooking for quest in db.",QCADDON_CHAT_TITLE))
+      for qcMapIndex, qcMapEntry in pairs(qcPinDB) do
+        for qcInitiatorIndex, qcInitiatorEntry in pairs(qcPinDB[qcMapIndex]) do
+          for qcInitiatorQuestIndex, qcInitiatorQuestEntry in pairs(qcPinDB[qcMapIndex][qcInitiatorIndex][7]) do
+            if (qcInitiatorQuestEntry == qcQuestID) then
+              --print(string.format("%sFound quest. Initiator: %s",QCADDON_CHAT_TITLE, qcInitiatorEntry[4]))
+              TomTom:AddMFWaypoint(qcMapIndex, 0, qcInitiatorEntry[5]/100, qcInitiatorEntry[6]/100, {title=qcInitiatorEntry[4]})
+              break
+            end
+          end
+        end
+      end
+      TomTom:SetClosestWaypoint()
+    end
 	end
 
+  --print(string.format("%sUpdating quest list",QCADDON_CHAT_TITLE))
 	qcUpdateQuestList(nil, qcMenuSlider:GetValue())
 
 end
