@@ -30,6 +30,22 @@ local QCADDON_PURGE = true
 local QCDEBUG_MODE = false
 local QCADDON_CHAT_TITLE = "|CFF9482C9Quest Completist:|r "
 
+local QC_ICON_COORDS_ITEMDROPREPEATABLE = {0.375,0.5,0.25,0.5}
+local QC_ICON_COORDS_CLASS = {0.5,0.625,0,0.25}
+local QC_ICON_COORDS_KILL = {0.25,0.375,0,0.25}
+
+local qcCategoryDropDownMenu = CreateFrame("Frame", "qcCategoryDropDownMenu")
+
+--[[ Bitwise Values ]]--
+qcFactionBits = {
+	["ALLIANCE"]=1,["HORDE"]=2,["NEUTRAL"]=4,
+}
+qcRaceBits = {
+	["HUMAN"]=1,["ORC"]=2,["DWARF"]=4,["NIGHTELF"]=8,
+	["SCOURGE"]=16,["TAUREN"]=32,["GNOME"]=64,["TROLL"]=128,
+	["GOBLIN"]=256,["BLOODELF"]=512,["DRAENEI"]=1024,["WORGEN"]=2048,
+	["PANDAREN"]=4096,["VOIDELF"]=8192,["NIGHTBORNE"]=16384, 
+	["HIGHMOUNTAINTAUREN"]=32768,["LIGHTFORGEDDRAENEI"]=65536
 
 local COLOUR_DEATHKNIGHT = "|cFFC41F3B"
 local COLOUR_DEMONHUNTER = "|cFFA330C9"
@@ -55,21 +71,6 @@ local QC_ICON_COORDS_READY = {0.125,0.25,0,0.25}
 local QC_ICON_COORDS_COMPLETE = {0.125,0.25,0.5,0.75}
 local QC_ICON_COORDS_UNATTAINABLE = {0.25,0.375,0.5,0.75}
 local QC_ICON_COORDS_ITEMDROPSTANDARD = {0.375,0.5,0,0.25}
-local QC_ICON_COORDS_ITEMDROPREPEATABLE = {0.375,0.5,0.25,0.5}
-local QC_ICON_COORDS_CLASS = {0.5,0.625,0,0.25}
-local QC_ICON_COORDS_KILL = {0.25,0.375,0,0.25}
-
-local qcCategoryDropDownMenu = CreateFrame("Frame", "qcCategoryDropDownMenu")
-
---[[ Bitwise Values ]]--
-qcFactionBits = {
-	["ALLIANCE"]=1,["HORDE"]=2,["NEUTRAL"]=4,
-}
-qcRaceBits = {
-	["HUMAN"]=1,["ORC"]=2,["DWARF"]=4,["NIGHTELF"]=8,
-	["SCOURGE"]=16,["TAUREN"]=32,["GNOME"]=64,["TROLL"]=128,
-	["GOBLIN"]=256,["BLOODELF"]=512,["DRAENEI"]=1024,["WORGEN"]=2048,
-	["PANDAREN"]=4096,["VOIDELF"]=8192,["NIGHTBORNE"]=16384
 }
 qcClassBits = {
 	["WARRIOR"]=1,["PALADIN"]=2,["HUNTER"]=4,["ROGUE"]=8,["PRIEST"]=16,
