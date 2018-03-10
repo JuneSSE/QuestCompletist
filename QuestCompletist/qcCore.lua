@@ -1611,6 +1611,7 @@ local function qcEventHandler(self, event, ...)
 			qcUpdateQuestList(nil, qcMenuSlider:GetValue())
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
+	  qcQuestQueryCompleted()
 		qcZoneChangedNewArea()
 	elseif (event == "ADDON_LOADED") then
 		if (... == "QuestCompletist") then
