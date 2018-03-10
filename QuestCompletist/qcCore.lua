@@ -676,6 +676,11 @@ function qcQuestClick(qcButtonIndex)
 
 end
 
+function qcFilterButton_OnClick(self, button, down) -- *
+    InterfaceOptionsFrame_OpenToCategory(qcInterfaceOptions)
+    InterfaceOptionsFrame_OpenToCategory(qcInterfaceOptions)
+end
+
 function qcCloseTooltip()
 	qcQuestInformationTooltip:Hide()
 	qcQuestReputationTooltip:Hide()

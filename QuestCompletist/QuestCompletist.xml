@@ -606,9 +606,7 @@
           <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x ="265" y ="-365"/>
         </Anchors>
         <Scripts>
-          <OnClick>
-            InterfaceOptionsFrame_OpenToCategory(qcInterfaceOptions)
-          </OnClick>
+          <OnClick>qcFilterButton_OnClick(self, button, down)</OnClick>
         </Scripts>
       </Button>
       <Frame name="qcCategoryDropdownMenu" inherits="UIDropDownMenuTemplate" frameStrata="FULLSCREEN_DIALOG">
