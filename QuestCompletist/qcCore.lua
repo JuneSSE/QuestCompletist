@@ -23,29 +23,12 @@ local qcToastTooltip = nil
 local qcNewDataAlertTooltip = nil
 local qcMutuallyExclusiveAlertTooltip = nil
 
-
 --[[ Constants ]]--
-local QCADDON_VERSION = 109.5
+local QCADDON_VERSION = 109.24
 local QCADDON_PURGE = true
 local QCDEBUG_MODE = false
 local QCADDON_CHAT_TITLE = "|CFF9482C9Quest Completist:|r "
 
-local QC_ICON_COORDS_ITEMDROPREPEATABLE = {0.375,0.5,0.25,0.5}
-local QC_ICON_COORDS_CLASS = {0.5,0.625,0,0.25}
-local QC_ICON_COORDS_KILL = {0.25,0.375,0,0.25}
-
-local qcCategoryDropDownMenu = CreateFrame("Frame", "qcCategoryDropDownMenu")
-
---[[ Bitwise Values ]]--
-qcFactionBits = {
-	["ALLIANCE"]=1,["HORDE"]=2,["NEUTRAL"]=4,
-}
-qcRaceBits = {
-	["HUMAN"]=1,["ORC"]=2,["DWARF"]=4,["NIGHTELF"]=8,
-	["SCOURGE"]=16,["TAUREN"]=32,["GNOME"]=64,["TROLL"]=128,
-	["GOBLIN"]=256,["BLOODELF"]=512,["DRAENEI"]=1024,["WORGEN"]=2048,
-	["PANDAREN"]=4096,["VOIDELF"]=8192,["NIGHTBORNE"]=16384, 
-	["HIGHMOUNTAINTAUREN"]=32768,["LIGHTFORGEDDRAENEI"]=65536
 
 local COLOUR_DEATHKNIGHT = "|cFFC41F3B"
 local COLOUR_DEMONHUNTER = "|cFFA330C9"
@@ -71,6 +54,24 @@ local QC_ICON_COORDS_READY = {0.125,0.25,0,0.25}
 local QC_ICON_COORDS_COMPLETE = {0.125,0.25,0.5,0.75}
 local QC_ICON_COORDS_UNATTAINABLE = {0.25,0.375,0.5,0.75}
 local QC_ICON_COORDS_ITEMDROPSTANDARD = {0.375,0.5,0,0.25}
+local QC_ICON_COORDS_ITEMDROPREPEATABLE = {0.375,0.5,0.25,0.5}
+local QC_ICON_COORDS_CLASS = {0.5,0.625,0,0.25}
+local QC_ICON_COORDS_KILL = {0.25,0.375,0,0.25}
+
+local qcCategoryDropDownMenu = CreateFrame("Frame", "qcCategoryDropDownMenu")
+
+--[[ Bitwise Values ]]--
+qcFactionBits = {
+	["ALLIANCE"]=1,["HORDE"]=2,["NEUTRAL"]=4,
+}
+qcRaceBits = {
+	["HUMAN"]=1,["ORC"]=2,["DWARF"]=4,["NIGHTELF"]=8,
+	["SCOURGE"]=16,["TAUREN"]=32,["GNOME"]=64,["TROLL"]=128,
+	["GOBLIN"]=256,["BLOODELF"]=512,["DRAENEI"]=1024,["WORGEN"]=2048,
+	["PANDAREN"]=4096,["VOIDELF"]=8192,["NIGHTBORNE"]=16384,
+	["HIGHMOUNTAINTAUREN"]=32768,["LIGHTFORGEDDRAENEI"]=65536,
+	["DARKIRONDWARF"]=131072,["MAGHARORC"]=262144,
+	["ZANDALARITROLL"]=524288,["KULTIRAN"]=1048576
 }
 qcClassBits = {
 	["WARRIOR"]=1,["PALADIN"]=2,["HUNTER"]=4,["ROGUE"]=8,["PRIEST"]=16,
@@ -94,19 +95,33 @@ qcProfessionBits = {
 	[185]=8192,		-- Cooking
 	[356]=16384,	-- Fishing
 }
+--qcSubQuestCatagoryBits = {
+--["Warfront"]=1,
+--["Bonus"]=2,
+--["Legion Assault"]=4,
+--["Assault"]=8
+--}
+--qcQuestFactionLevelBits = {
+--	["Hated"]=1,
+--	["NEUTRAL"]=2
+--	["Friendly"]=4,
+--	["Honored"]=8
+--	["Revered"]=16,
+--	["Exalted"]=32
+--}
 local qcHolidayDates = {
-	[1]={"110920","111005"},		-- Brewfest 2011
-	[2]={"120429","120505"},		-- Children's Week 2012
-	[4]={"111101","111102"},		-- Day of the Dead 2011
-	[8]={"111215","120102"},		-- Feast of Winter Veil 2011-2012
-	[16]={"111018","111031"},		-- Hallow's End 2011
-	[32]={"110906","110912"},		-- Harvest Festival TODO FOR 2012
-	[64]={"120205","120218"},		-- Love is in the Air 2012
-	[128]={"120122","120211"},		-- Lunar Festival 2012
-	[256]={"120621","120704"},		-- Midsummer Fire Festival 2012
-	[512]={"120408","120414"},		-- Noblegarden 2012
-	[1024]={"111120","111126"},		-- Pilgrim's Bounty 2011
-	[2048]={"120919","120919"},		-- Pirates' Day 2012
+	[1]={"180920","111006"},		-- Brewfest 2018
+	[2]={"180425","180502"},		-- Children's Week 2018
+	[4]={"181101","181103"},		-- Day of the Dead 2018
+	[8]={"181216","190102"},		-- Feast of Winter Veil 2018-2019
+	[16]={"181018","181101"},		-- Hallow's End 2018
+	[32]={"180918","180925"},		-- Harvest Festival 2018
+	[64]={"190205","190219"},		-- Love is in the Air 2019
+	[128]={"190128","190211"},		-- Lunar Festival 2019
+	[256]={"180621","180705"},		-- Midsummer Fire Festival 2018
+	[512]={"180402","180409"},		-- Noblegarden 2018
+	[1024]={"181119","181126"},		-- Pilgrim's Bounty 2018
+	[2048]={"180919","180920"},		-- Pirates' Day 2018
 }
 
 --[[ Constants for the Key Bindings & Slash Commands ]]--
@@ -559,8 +574,8 @@ function qcCategoryDropdown_OnLoad(self) -- TODO: Is this even needed anymore?
 end
 
 local function qcZoneChangedNewArea() -- *
-	SetMapToCurrentZone()
-	local id = GetCurrentMapAreaID()
+--	SetMapToCurrentZone()
+	local id = C_Map.GetBestMapForUnit("player")
 	if (qcAreaIDToCategoryID[id]) then
 		qcCurrentCategoryID = qcAreaIDToCategoryID[id]
 		qcUpdateQuestList(qcCurrentCategoryID,1)
@@ -665,22 +680,28 @@ function qcQuestClick(qcButtonIndex)
 			end
 		end
   else
-    --print(string.format("%sLooking for Tom Tom.",QCADDON_CHAT_TITLE))
-    if (IsAddOnLoaded('TomTom')) then
-      --print(string.format("%sLooking for quest in db.",QCADDON_CHAT_TITLE))
-      for qcMapIndex, qcMapEntry in pairs(qcPinDB) do
-        for qcInitiatorIndex, qcInitiatorEntry in pairs(qcPinDB[qcMapIndex]) do
-          for qcInitiatorQuestIndex, qcInitiatorQuestEntry in pairs(qcPinDB[qcMapIndex][qcInitiatorIndex][7]) do
-            if (qcInitiatorQuestEntry == qcQuestID) then
-              --print(string.format("%sFound quest. Initiator: %s",QCADDON_CHAT_TITLE, qcInitiatorEntry[4]))
-              TomTom:AddMFWaypoint(qcMapIndex, 0, qcInitiatorEntry[5]/100, qcInitiatorEntry[6]/100, {title=qcInitiatorEntry[4]})
-              break
-            end
-          end
-        end
-      end
-      TomTom:SetClosestWaypoint()
-    end
+		-- print(string.format("%sLooking for Tom Tom.",QCADDON_CHAT_TITLE))
+		if (IsAddOnLoaded('TomTom')) then
+			local addedWayPoint;
+			-- print(string.format("%sLooking for quest in db.",QCADDON_CHAT_TITLE))
+			for qcMapIndex, qcMapEntry in pairs(qcPinDB) do
+				for qcInitiatorIndex, qcInitiatorEntry in pairs(qcPinDB[qcMapIndex]) do
+					for qcInitiatorQuestIndex, qcInitiatorQuestEntry in pairs(qcPinDB[qcMapIndex][qcInitiatorIndex][7]) do
+						if (qcInitiatorQuestEntry == qcQuestID) then
+							-- print(string.format("%sFound quest. Initiator: %s",QCADDON_CHAT_TITLE, qcInitiatorEntry[4]))
+							-- print("/way " .. qcInitiatorEntry[5] .. qcInitiatorEntry[6])
+							--TomTom:AddWaypoint(qcMapIndex, 0, qcInitiatorEntry[5]/100, qcInitiatorEntry[6]/100, {title=qcInitiatorEntry[4]})
+							TomTom:AddWaypointToCurrentZone(qcInitiatorEntry[5], qcInitiatorEntry[6], qcInitiatorEntry[4])
+							addedWayPoint = true
+							break
+						end
+					end
+				end
+			end
+			if (addedWayPoint) then
+				TomTom:SetClosestWaypoint()
+			end
+		end
 	end
 
   --print(string.format("%sUpdating quest list",QCADDON_CHAT_TITLE))
@@ -747,7 +768,7 @@ function qcNewDataAlert_OnEnter(self) -- *
 	qcNewDataAlertTooltip:SetOwner(qcNewDataAlert, "ANCHOR_CURSOR")
 	qcNewDataAlertTooltip:ClearLines()
 	qcNewDataAlertTooltip:AddLine("Quest Completist")
-	qcNewDataAlertTooltip:AddLine(COLOUR_HUNTER .. "Quest Completist was not aware of the following information. Please help improve the accuracy of the addon by contributing with the Community Editor! (Link on Curse)", nil, nil, nil, true)
+	qcNewDataAlertTooltip:AddLine(COLOUR_HUNTER .. "Quest Completist was not aware of the following information. Please help improve the accuracy of the addon by submiting a post ore new issue over at curse", nil, nil, nil, true)
 	if (qcNewDataAlert.New) then
 		qcNewDataAlertTooltip:AddLine(COLOUR_MAGE .. " - Quest does not exist in the database.", nil, nil, nil, true)
 		qcNewDataAlertTooltip:Show()
@@ -1056,15 +1077,15 @@ local function qcShowPin(index, icon) -- *
 	pin:Show()
 end
 
-local function qcRefreshPins(mapId, mapLevel)
+local function qcRefreshPins(uimapId, mapLevel)
 	if not (WorldMapFrame:IsVisible()) then return nil end
 	qcHideAllPins()
 	wipe(qcPins)
-	if (qcSettings.QC_M_SHOW_ICONS == 0) or (qcPinDB[mapId] == nil) then
+	if (qcSettings.QC_M_SHOW_ICONS == 0) or (qcPinDB[uimapId] == nil) then
 		wipe(qcPins)
 		return nil
 	end
-	qcPins = qcCopyTable(qcPinDB[mapId])
+	qcPins = qcCopyTable(qcPinDB[uimapId])
 	for i = #qcPins, 1, -1 do
 		if not (qcPins[i][1] == mapLevel) then
 			TableRemove(qcPins,i)
@@ -1181,28 +1202,7 @@ local function qcRefreshPins(mapId, mapLevel)
 			end
 		end
 	end
-	
-	--[[WORLDQUEST ]]--
---	if (qcSettings["QC_ML_HIDE_WORLDQUEST"] == 1) then
---		for i = #qcPins, 1, -1 do
---			for qcQuestIndex = #qcPins[i][7], 1, -1 do
---				local qcQuestID = qcPins[i][7][qcQuestIndex]
---				local _S, qcCurrentPlayerRace = UnitRace("player")
---				local qcCurrentRace = qcRaceBits[string.upper(qcCurrentPlayerRace)]
---				local _S, qcCurrentPlayerClass = UnitClass("player")
---				local qcCurrentClass = qcClassBits[string.upper(qcCurrentPlayerClass)]
---				if (qcQuestDatabase[qcQuestID]) and (BitBand(qcQuestDatabase[qcQuestID][8], qcCurrentRace) == 0) then
---					TableRemove(qcPins[i][7], qcQuestIndex)
---				elseif (qcQuestDatabase[qcQuestID]) and (BitBand(qcQuestDatabase[qcQuestID][9], qcCurrentClass) == 0) then
---					TableRemove(qcPins[i][7], qcQuestIndex)
---				end
---			end
---			if (#qcPins[i][7] == 0) then
---				TableRemove(qcPins, i)
---			end
---		end
---	end
-	
+
 	--[[ In progress ]]--
 	if (qcSettings["QC_M_HIDE_INPROGRESS"] == 1) then
 		for i = #qcPins, 1, -1 do
@@ -1253,7 +1253,7 @@ end
 
 function qcInterfaceOptions_Okay(self) -- *
 	qcUpdateQuestList(qcCurrentCategoryID, 1)
-	qcRefreshPins(GetCurrentMapAreaID(), GetCurrentMapDungeonLevel())
+	qcRefreshPins(C_Map.GetBestMapForUnit("player"))
 end
 
 function qcInterfaceOptions_Cancel(self) -- *
@@ -1267,7 +1267,7 @@ function qcInterfaceOptions_OnShow(self)
     qcConfigTitle:SetText(qcL.CONFIGTITLE)
 
     qcConfigSubtitle = self:CreateFontString("qcConfigSubtitle", "ARTWORK", "GameFontHighlightSmall")
-    qcConfigSubtitle:SetHeight(22)
+    qcConfigSubtitle:SetHeight(22) -- Hight from top to put the checkbox in filters
     qcConfigSubtitle:SetPoint("TOPLEFT", qcConfigTitle, "BOTTOMLEFT", 0, -8)
     qcConfigSubtitle:SetPoint("RIGHT", self, -32, 0)
     qcConfigSubtitle:SetNonSpaceWrap(true)
@@ -1323,6 +1323,18 @@ function qcInterfaceOptions_OnShow(self)
 		end
 	end)
 
+--diabled whit line 1548 ->1552 getting behind other filter
+--	qcIO_M_HIDE_WORLDQUEST = CreateFrame("CheckButton", "qcIO_M_HIDE_WORLDQUEST", self, "InterfaceOptionsCheckButtonTemplate")
+--    qcIO_M_HIDE_WORLDQUEST:SetPoint("TOPLEFT", qcIO_M_HIDE_LOWLEVEL, "BOTTOMLEFT", 0, 0)
+--	_G[qcIO_M_HIDE_WORLDQUEST:GetName().."Text"]:SetText(qcL.HIDEWORLDQUEST)
+--	qcIO_M_HIDE_WORLDQUEST:SetScript("OnClick", function(self)
+--		if (qcIO_M_HIDE_WORLDQUEST:GetChecked() == false) then
+--			qcSettings.QC_M_HIDE_WORLDQUEST = 0
+--		else
+--			qcSettings.QC_M_HIDE_WORLDQUEST = 1
+--		end
+--	end)
+
 	qcIO_M_HIDE_SEASONAL = CreateFrame("CheckButton", "qcIO_M_HIDE_SEASONAL", self, "InterfaceOptionsCheckButtonTemplate")
     qcIO_M_HIDE_SEASONAL:SetPoint("TOPLEFT", qcIO_M_HIDE_PROFESSION, "BOTTOMLEFT", 0, 0)
 	_G[qcIO_M_HIDE_SEASONAL:GetName().."Text"]:SetText(qcL.HIDENONACTIVESEASONALQUESTS)
@@ -1344,7 +1356,7 @@ function qcInterfaceOptions_OnShow(self)
 			qcSettings.QC_M_HIDE_INPROGRESS = 1
 		end
 	end)
-	
+
 --- Quest List Filters Start ---
     qcListFiltersTitle = self:CreateFontString("qcListFiltersTitle", "ARTWORK", "GameFontNormal")
     qcListFiltersTitle:SetPoint("TOPLEFT", qcConfigSubtitle, "BOTTOMLEFT", 16, -185)
@@ -1382,21 +1394,22 @@ function qcInterfaceOptions_OnShow(self)
 			qcSettings.QC_L_HIDE_PROFESSION = 1
 		end
 	end)
-	
----		qcIO_L_HIDE_WORLDQUEST = CreateFrame("CheckButton", "qcIO_L_HIDE_WORLDQUEST", self, "InterfaceOptionsCheckButtonTemplate")
----   qcIO_L_HIDE_WORLDQUEST:SetPoint("TOPLEFT", qcIO_L_HIDE_WORLDQUEST, "BOTTOMLEFT", 0, 0)
----	_G[qcIO_L_HIDE_WORLDQUEST:GetName().."Text"]:SetText(qcL.HIDEWORLDQUEST .. COLOUR_DEATHKNIGHT .. " (Not Yet Implemented)")
----	qcIO_L_HIDE_WORLDQUEST:SetScript("OnClick", function(self)
----	if (qcIO_L_HIDE_WORLDQUEST:GetChecked() == false) then
----			qcSettings.QC_L_HIDE_WORLDQUEST = 0
----		else
----			qcSettings.QC_L_HIDE_WORLDQUEST = 1
----		end
----	end)
+
+--diabled whit line 1578 ->1582 getting behind other filter
+	--qcIO_L_HIDE_WORLDQUEST = CreateFrame("CheckButton", "qcIO_L_HIDE_WORLDQUEST", self, "InterfaceOptionsCheckButtonTemplate")
+   -- qcIO_L_HIDE_WORLDQUEST:SetPoint("TOPLEFT", qcIO_L_HIDE_LOWLEVEL, "BOTTOMLEFT", 0, 0)
+	--_G[qcIO_L_HIDE_WORLDQUEST:GetName().."Text"]:SetText(qcL.HIDEWORLDQUEST .. COLOUR_DEATHKNIGHT .. " (Not Yet Implemented)")
+	--qcIO_L_HIDE_WORLDQUEST:SetScript("OnClick", function(self)
+	--	if (qcIO_L_HIDE_WORLDQUEST:GetChecked() == false) then
+	--		qcSettings.QC_L_HIDE_WORLDQUEST = 0
+	--	else
+	--		qcSettings.QC_L_HIDE_WORLDQUEST = 1
+	--	end
+	--end)
 
 --- Combined Map and Quest FILTERS
     qcCombinedFiltersTitle = self:CreateFontString("qcCombinedFiltersTitle", "ARTWORK", "GameFontNormal")
-    qcCombinedFiltersTitle:SetPoint("TOPLEFT", qcConfigSubtitle, "BOTTOMLEFT", 16, -290)
+    qcCombinedFiltersTitle:SetPoint("TOPLEFT", qcConfigSubtitle, "BOTTOMLEFT", 16, -350)
     qcCombinedFiltersTitle:SetText(qcL.COMBINEDMAPANDQUESTFILTERS)
 
 	qcIO_ML_HIDE_FACTION = CreateFrame("CheckButton", "qcIO_ML_HIDE_FACTION", self, "InterfaceOptionsCheckButtonTemplate")
@@ -1444,6 +1457,7 @@ end
 
 local function qcWelcomeMessage()
 	print(string.format("%sThanks for using Quest Completist. Spot a quest innaccuracy? Please report it on curse",QCADDON_CHAT_TITLE))
+	print(string.format("%sWarning!!! Map Pins are missing, we are working on a solution no eta",QCADDON_CHAT_TITLE))
 end
 
 local function qcCheckSettings()
@@ -1472,6 +1486,9 @@ local function qcCheckSettings()
 	end
 	if (qcSettings.QC_M_HIDE_PROFESSION == nil) then --[[ 0:No, 1:Yes ]]--
 		qcSettings.QC_M_HIDE_PROFESSION = 1
+	end
+	if (qcSettings.QC_M_HIDE_WORLDQUEST == nil) then --[[ 0:No, 1:Yes ]]--
+		qcSettings.QC_M_HIDE_WORLDQUEST = 1
 	end
 	if (qcSettings.QC_M_HIDE_SEASONAL == nil) then --[[ 0:No, 1:Yes ]]--
 		qcSettings.QC_M_HIDE_SEASONAL = 1
@@ -1528,6 +1545,11 @@ local function qcApplySettings()
 	else
 		qcIO_M_HIDE_PROFESSION:SetChecked(true)
 	end
+--	if (qcSettings.QC_M_HIDE_WORLDQUEST == 0) then
+--		qcIO_M_HIDE_WORLDQUEST:SetChecked(false)
+--	else
+--		qcIO_M_HIDE_WORLDQUEST:SetChecked(true)
+--	end
 	if (qcSettings.QC_M_HIDE_SEASONAL == 0) then
 		qcIO_M_HIDE_SEASONAL:SetChecked(false)
 	else
@@ -1553,11 +1575,12 @@ local function qcApplySettings()
 	else
 		qcIO_L_HIDE_PROFESSION:SetChecked(true)
 	end
---	if (qcSettings.QC_L_HIDE_WORLDQUEST == 0) then
---		qcIO_L_HIDE_WORLDQUEST:SetChecked(false)
---	else
---		qcIO_L_HIDE_WORLDQUEST:SetChecked(true)
---	end
+	--if (qcSettings.QC_L_HIDE_WORLDQUEST == 0) then
+	--	qcIO_L_HIDE_WORLDQUEST:SetChecked(false)
+	--else
+	--	qcIO_L_HIDE_WORLDQUEST:SetChecked(true)
+	--end
+
 	if (qcSettings.QC_ML_HIDE_FACTION == 0) then
 		qcIO_ML_HIDE_FACTION:SetChecked(false)
 	else
@@ -1585,8 +1608,8 @@ local function qcApplySettings()
 end
 
 local function qcEventHandler(self, event, ...)
-	if (event == "WORLD_MAP_UPDATE") then
-		qcRefreshPins(GetCurrentMapAreaID(), GetCurrentMapDungeonLevel())
+	if (event == "ADVENTURE_MAP_OPEN") then
+		qcRefreshPins(C_Map.GetBestMapForUnit("player"))
 	elseif (event == "UNIT_QUEST_LOG_CHANGED") then
 		if (... == "player") then qcUpdateQuestList(nil, qcMenuSlider:GetValue()) end
 	elseif (event == "ZONE_CHANGED_NEW_AREA") then
@@ -1621,10 +1644,11 @@ local function qcEventHandler(self, event, ...)
 			qcUpdateMutuallyExclusiveCompletedQuest(qcQuestID)
 			qcUpdateSkippedBreadcrumbQuest(qcQuestID)
 			qcUpdateQuestList(nil, qcMenuSlider:GetValue())
+			
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
-	  qcQuestQueryCompleted()
-		qcZoneChangedNewArea()
+			qcQuestQueryCompleted()
+			qcZoneChangedNewArea()
 	elseif (event == "ADDON_LOADED") then
 		if (... == "QuestCompletist") then
 			if not (qcCompletedQuests) then qcCompletedQuests = {} end
@@ -1662,7 +1686,7 @@ function qcQuestCompletistUI_OnLoad(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	self:RegisterEvent("ADDON_LOADED")
-	self:RegisterEvent("WORLD_MAP_UPDATE")
+	self:RegisterEvent("ADVENTURE_MAP_OPEN")
 	self:SetScript("OnEvent", qcEventHandler)
 	qcQuestInformationTooltipSetup()
 	qcQuestReputationTooltipSetup()

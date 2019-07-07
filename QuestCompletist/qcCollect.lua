@@ -33,11 +33,11 @@ end
 
 function qcVerifyMapDataExists()
 
-	SetMapToCurrentZone()
+--	SetMapToCurrentZone()
 
 	local qcQuestID = GetQuestID()
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapName = GetMapNameByID(qcMapID)
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+	local qcMapName = C_Map.GetAreaInfo(qcMapID).name  -- qcUiMapID ?
 
 	if not (qcPinDB[qcMapID]) then
 		PlaySound("8959", "1115")
@@ -49,7 +49,7 @@ function qcVerifyMapDataExists()
 		return nil
 	end
 
-	local X, Y = GetPlayerMapPosition("player")
+	local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 	local qcX = tonumber(string.format("%.1f",X*100))
 	local qcY = tonumber(string.format("%.1f",Y*100))
 	local qcInitiatorFound
@@ -84,10 +84,10 @@ end
 
 function qcGenerateMapData()
 
-	SetMapToCurrentZone()
+--	SetMapToCurrentZone()
 	local qcQuestID = GetQuestID()
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapLevel = GetCurrentMapDungeonLevel()
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+--	local qcMapLevel = GetCurrentMapDungeonLevel()
 
 	local qcIconType = 1
 	if (QuestIsDaily()) then
@@ -114,17 +114,17 @@ function qcGenerateMapData()
 	local qcX = 0
 	local qxY = 0
 	do
-		local X, Y = GetPlayerMapPosition("player")
+		local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 		qcX = tonumber(string.format("%.1f",X*100))
 		qcY = tonumber(string.format("%.1f",Y*100))
 	end
 	print(string.format("ZONE MAP:   |cFF69CCF0[%d] = {%d,%d,%d,%q,%.1f,%.1f,{%d}},|r", qcMapID, qcMapLevel, qcIconType, qcInitiatorID, qcInitiatorName, qcX, qcY, qcQuestID))
 	
 	if (ZoomOut()) then
-		local qcMapID = GetCurrentMapAreaID()
-		local qcMapLevel = GetCurrentMapDungeonLevel()
+		local qcMapID = C_Map.GetBestMapForUnit("player")
+--		local qcMapLevel = GetCurrentMapDungeonLevel()
 		do
-			local X, Y = GetPlayerMapPosition("player")
+			local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 			qcX = tonumber(string.format("%.1f",X*100))
 			qcY = tonumber(string.format("%.1f",Y*100))
 		end
@@ -133,11 +133,11 @@ function qcGenerateMapData()
 		end
 	end
 
-	SetMapByID(14)
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapLevel = GetCurrentMapDungeonLevel()
+--	SetMapByID(14)
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+--	local qcMapLevel = GetCurrentMapDungeonLevel()
 	do
-		local X, Y = GetPlayerMapPosition("player")
+		local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 		qcX = tonumber(string.format("%.1f",X*100))
 		qcY = tonumber(string.format("%.1f",Y*100))
 	end
@@ -145,11 +145,11 @@ function qcGenerateMapData()
 		print(string.format("EK MAP:   [%d] = {%d,%d,%d,%q,%.1f,%.1f,{%d}},", qcMapID, qcMapLevel, qcIconType, qcInitiatorID, qcInitiatorName, qcX, qcY, qcQuestID))
 	end
 
-	SetMapByID(13)
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapLevel = GetCurrentMapDungeonLevel()
+--	SetMapByID(13)
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+--	local qcMapLevel = GetCurrentMapDungeonLevel()
 	do
-		local X, Y = GetPlayerMapPosition("player")
+		local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 		qcX = tonumber(string.format("%.1f",X*100))
 		qcY = tonumber(string.format("%.1f",Y*100))
 	end
@@ -157,11 +157,11 @@ function qcGenerateMapData()
 		print(string.format("KA MAP:   [%d] = {%d,%d,%d,%q,%.1f,%.1f,{%d}},", qcMapID, qcMapLevel, qcIconType, qcInitiatorID, qcInitiatorName, qcX, qcY, qcQuestID))
 	end
 
-	SetMapByID(485)
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapLevel = GetCurrentMapDungeonLevel()
+--	SetMapByID(485)
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+--	local qcMapLevel = GetCurrentMapDungeonLevel()
 	do
-		local X, Y = GetPlayerMapPosition("player")
+		local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 		qcX = tonumber(string.format("%.1f",X*100))
 		qcY = tonumber(string.format("%.1f",Y*100))
 	end
@@ -169,11 +169,11 @@ function qcGenerateMapData()
 		print(string.format("NR MAP:   [%d] = {%d,%d,%d,%q,%.1f,%.1f,{%d}},", qcMapID, qcMapLevel, qcIconType, qcInitiatorID, qcInitiatorName, qcX, qcY, qcQuestID))
 	end
 
-	SetMapByID(466)
-	local qcMapID = GetCurrentMapAreaID()
-	local qcMapLevel = GetCurrentMapDungeonLevel()
+--	SetMapByID(466)
+	local qcMapID = C_Map.GetBestMapForUnit("player")
+--	local qcMapLevel = GetCurrentMapDungeonLevel()
 	do
-		local X, Y = GetPlayerMapPosition("player")
+		local X, Y = C_Map.GetPlayerMapPosition(qcMapID, "player")
 		qcX = tonumber(string.format("%.1f",X*100))
 		qcY = tonumber(string.format("%.1f",Y*100))
 	end
