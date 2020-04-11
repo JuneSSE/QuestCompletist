@@ -441,6 +441,14 @@ qcLocalize = {
 	PLAYERVSPLAYER = "Player Vs Player",
 	HERITAGE = "Heritage",
 	RATEDPVP = "Rated Pvp",
+	WORLDPVP = "World Pvp",
+	THEETERNALPALACE = "The Eternal Palace",
+	NYALOTHATHEWALKINGCITY = "Ny'alotha, The Waking City",
+	VISIONSOFNZOTH = "Visions of N'Zoth",
+	BLACKEMPIRECAMPAIGN = "Black Empire Campaign",
+	HIDEWORLDQUEST = "Hide Daily and World Quests",
+	HIDECOMPLETEDQUESTS = "Hide Completed Quests",
+	WORLDQUEST = "World Quests",
 }
 
 end

@@ -122,6 +122,9 @@ qcLocalize = {
 	HIDEOTHERFACTIONQUESTS = "Esconder otras misiones de facción",
 	HIDEOTHERPROFESSIONQUESTS = "Esconder otras misiones de profesión",
 	HIDEOTHERRACEANDCLASSQUESTS = "Esconder otras misiones de clase/raza",
+	HIDEWORLDQUEST = "Hide Daily and World Quests",
+	HIDECOMPLETEDQUESTS = "Hide Completed Quests",
+	WORLDQUEST = "World Quests",
 	HIGHMAUL = "Highmaul", -- Requires localization
 	HILLSBRADFOOTHILLS = "Laderas de Trabalomas",
 	HOUROFTWILIGHT = "Hora del Crepusculo",
@@ -440,6 +443,11 @@ qcLocalize = {
 	PLAYERVSPLAYER = "Player Vs Player",
 	HERITAGE = "Heritage",
 	RATEDPVP = "Rated Pvp",
+	WORLDPVP = "World Pvp",
+	THEETERNALPALACE = "The Eternal Palace",
+	NYALOTHATHEWALKINGCITY = "Ny'alotha, The Waking City",
+	VISIONSOFNZOTH = "Visions of N'Zoth",
+	BLACKEMPIRECAMPAIGN = "Black Empire Campaign",
 }
 
 end
